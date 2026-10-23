@@ -1,0 +1,414 @@
+```html
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Crypto Clicker Telegram Mini App</title>
+  
+  <!-- Telegram WebApp SDK -->
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            telegram: {
+              bg: '#0f172a',
+              card: 'rgba(30, 41, 59, 0.7)',
+              accent: '#38bdf8',
+              gold: '#f59e0b',
+              purple: '#8b5cf6'
+            }
+          },
+          animation: {
+            'pulse-fast': 'pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            'bounce-short': 'bounce 0.5s ease-in-out 1',
+            'float-up': 'floatUp 0.8s ease-out forwards',
+          },
+          keyframes: {
+            floatUp: {
+              '0%': { opacity: '1', transform: 'translateY(0) scale(1)' },
+              '100%': { opacity: '0', transform: 'translateY(-80px) scale(1.2)' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom Scrollbar Removal & Mobile Optimization */
+    body {
+      touch-action: manipulation;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-touch-callout: none;
+      background-color: #0b0f19;
+      color: #f8fafc;
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    /* Glassmorphism utility */
+    .glass-card {
+      background: rgba(30, 41, 59, 0.65);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    }
+
+    .glass-card-interactive:active {
+      transform: scale(0.98);
+      opacity: 0.9;
+    }
+
+    /* Coin Glow effect */
+    .coin-glow {
+      box-shadow: 0 0 50px rgba(245, 158, 11, 0.35);
+    }
+    .coin-glow:active {
+      box-shadow: 0 0 80px rgba(245, 158, 11, 0.6);
+    }
+
+    /* Floating Tap Text Marker */
+    .tap-pop {
+      position: absolute;
+      pointer-events: none;
+      font-weight: 800;
+      color: #38bdf8;
+      text-shadow: 0px 2px 10px rgba(56, 189, 248, 0.8);
+      z-index: 100;
+      animation: floatUp 0.8s ease-out forwards;
+    }
+
+    /* Hide Scrollbars */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+<body class="font-sans antialiased flex flex-col justify-between h-screen w-screen overflow-hidden bg-slate-950 text-slate-100">
+
+  <!-- TOP HEADER / STATS OVERVIEW -->
+  <header class="w-full pt-4 px-4 flex justify-between items-center z-10">
+    <div class="flex items-center space-x-2 glass-card px-3 py-1.5 rounded-full">
+      <div id="user-avatar" class="w-7 h-7 rounded-full bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center text-xs font-bold text-white uppercase">
+        TG
+      </div>
+      <span id="user-name" class="text-xs font-medium truncate max-w-[100px]">Player</span>
+    </div>
+
+    <!-- Rank Badge -->
+    <div class="glass-card px-3 py-1.5 rounded-full flex items-center space-x-2">
+      <i class="fa-solid fa-trophy text-amber-400 text-xs"></i>
+      <span id="user-rank" class="text-xs font-semibold text-amber-300">Bronze</span>
+    </div>
+  </header>
+
+  <!-- MAIN VIEWPORT CONTAINER -->
+  <main class="flex-1 relative overflow-y-auto no-scrollbar pb-24 pt-2 px-4 flex flex-col justify-center items-center">
+
+    <!-- ==================== TAB 1: CLICKER GAME ==================== -->
+    <section id="tab-game" class="w-full flex flex-col items-center justify-between h-full py-2">
+      
+      <!-- Balance Display -->
+      <div class="flex flex-col items-center mt-2">
+        <div class="flex items-center justify-center space-x-3">
+          <i class="fa-solid fa-coins text-4xl text-amber-400 drop-shadow-[0_0_15px_rgba(245,158,11,0.5)]"></i>
+          <span id="balance" class="text-5xl font-extrabold tracking-tight text-white">0</span>
+        </div>
+        
+        <!-- Passive Income Display -->
+        <div class="mt-2 text-xs font-medium text-slate-400 flex items-center space-x-1.5 bg-slate-900/60 px-3 py-1 rounded-full border border-slate-800">
+          <i class="fa-solid fa-bolt text-emerald-400"></i>
+          <span>Passive Income: <strong id="pnl-rate" class="text-emerald-400">+0</strong>/sec</span>
+        </div>
+      </div>
+
+      <!-- Rank Progress Bar -->
+      <div class="w-full max-w-xs mt-3">
+        <div class="flex justify-between text-[10px] text-slate-400 font-medium mb-1 px-1">
+          <span id="rank-current-title">Bronze</span>
+          <span id="rank-progress-text">0 / 1,000</span>
+        </div>
+        <div class="w-full bg-slate-800/80 rounded-full h-2 overflow-hidden p-0.5 border border-slate-700/50">
+          <div id="rank-bar" class="bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-300 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
+        </div>
+      </div>
+
+      <!-- Main Clicker Coin -->
+      <div class="relative my-auto flex items-center justify-center">
+        <!-- Pulse Rings -->
+        <div class="absolute w-64 h-64 rounded-full bg-amber-500/10 animate-ping pointer-events-none"></div>
+        <div class="absolute w-72 h-72 rounded-full bg-blue-500/5 blur-xl pointer-events-none"></div>
+
+        <button id="coin-btn" class="relative w-64 h-64 rounded-full bg-gradient-to-b from-amber-300 via-amber-500 to-amber-700 p-2 coin-glow transition-transform duration-75 active:scale-95 focus:outline-none select-none flex items-center justify-center cursor-pointer border-4 border-amber-200/50 shadow-2xl">
+          <div class="w-full h-full rounded-full bg-gradient-to-tr from-amber-600 via-amber-400 to-yellow-200 flex items-center justify-center border-2 border-amber-300 shadow-inner">
+            <i class="fa-solid fa-bolt-lightning text-8xl text-amber-900/80 drop-shadow-lg"></i>
+          </div>
+        </button>
+      </div>
+
+      <!-- Energy System -->
+      <div class="w-full max-w-xs flex flex-col items-center">
+        <div class="w-full flex justify-between items-center mb-1 px-1 text-xs">
+          <div class="flex items-center space-x-1.5 text-amber-400 font-semibold">
+            <i class="fa-solid fa-charging-station text-sm"></i>
+            <span id="energy-text">1000 / 1000</span>
+          </div>
+          <span class="text-[10px] text-slate-400">Regenerates continuous</span>
+        </div>
+        <div class="w-full bg-slate-800/80 rounded-full h-3 overflow-hidden border border-slate-700/50 p-0.5">
+          <div id="energy-bar" class="bg-gradient-to-r from-amber-500 to-yellow-400 h-full rounded-full transition-all duration-150" style="width: 100%"></div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ==================== TAB 2: SHOP / BOOSTS ==================== -->
+    <section id="tab-shop" class="w-full flex flex-col items-center space-y-3 hidden">
+      <h2 class="text-xl font-bold text-slate-100 flex items-center space-x-2">
+        <i class="fa-solid fa-rocket text-amber-400"></i>
+        <span>Boosters & Upgrades</span>
+      </h2>
+      <p class="text-xs text-slate-400 text-center mb-2">Upgrade your mining power to earn faster!</p>
+
+      <div class="w-full space-y-2.5">
+        
+        <!-- Multi-Tap Upgrade Card -->
+        <div class="glass-card p-3.5 rounded-2xl flex items-center justify-between">
+          <div class="flex items-center space-x-3">
+            <div class="w-12 h-12 rounded-xl bg-amber-500/20 flex items-center justify-center text-amber-400 text-xl border border-amber-500/30">
+              <i class="fa-solid fa-hand-pointer"></i>
+            </div>
+            <div>
+              <div class="text-sm font-bold text-white">Multitap</div>
+              <div class="text-[11px] text-slate-400">Increase tap limit by <span id="tap-power-increase" class="text-emerald-400">+1</span></div>
+              <div class="text-xs font-semibold text-amber-400 mt-0.5">Lvl <span id="tap-lvl">1</span></div>
+            </div>
+          </div>
+          <button id="buy-tap" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-slate-950 font-bold text-xs shadow-lg glass-card-interactive flex items-center space-x-1">
+            <i class="fa-solid fa-coins text-[10px]"></i>
+            <span id="tap-cost">100</span>
+          </button>
+        </div>
+
+        <!-- Energy Capacity Upgrade Card -->
+        <div class="glass-card p-3.5 rounded-2xl flex items-center justify-between">
+          <div class="flex items-center space-x-3">
+            <div class="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-400 text-xl border border-blue-500/30">
+              <i class="fa-solid fa-battery-full"></i>
+            </div>
+            <div>
+              <div class="text-sm font-bold text-white">Energy Limit</div>
+              <div class="text-[11px] text-slate-400">Increase max energy by <span class="text-emerald-400">+500</span></div>
+              <div class="text-xs font-semibold text-blue-400 mt-0.5">Lvl <span id="energy-lvl">1</span></div>
+            </div>
+          </div>
+          <button id="buy-energy" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-slate-950 font-bold text-xs shadow-lg glass-card-interactive flex items-center space-x-1">
+            <i class="fa-solid fa-coins text-[10px]"></i>
+            <span id="energy-cost">200</span>
+          </button>
+        </div>
+
+        <!-- Passive Mining Bot Card -->
+        <div class="glass-card p-3.5 rounded-2xl flex items-center justify-between">
+          <div class="flex items-center space-x-3">
+            <div class="w-12 h-12 rounded-xl bg-purple-500/20 flex items-center justify-center text-purple-400 text-xl border border-purple-500/30">
+              <i class="fa-solid fa-robot"></i>
+            </div>
+            <div>
+              <div class="text-sm font-bold text-white">Auto-Mining Bot</div>
+              <div class="text-[11px] text-slate-400">Earns <span class="text-emerald-400">+5</span> coins / sec</div>
+              <div class="text-xs font-semibold text-purple-400 mt-0.5">Lvl <span id="passive-lvl">0</span></div>
+            </div>
+          </div>
+          <button id="buy-passive" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-slate-100 font-bold text-xs shadow-lg glass-card-interactive flex items-center space-x-1">
+            <i class="fa-solid fa-coins text-[10px] text-amber-300"></i>
+            <span id="passive-cost">500</span>
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==================== TAB 3: TASKS & QUESTS ==================== -->
+    <section id="tab-tasks" class="w-full flex flex-col items-center space-y-3 hidden">
+      <h2 class="text-xl font-bold text-slate-100 flex items-center space-x-2">
+        <i class="fa-solid fa-list-check text-sky-400"></i>
+        <span>Earn Rewards</span>
+      </h2>
+      <p class="text-xs text-slate-400 text-center mb-2">Complete quick tasks to get free coins instantly!</p>
+
+      <div class="w-full space-y-2.5">
+        
+        <!-- Task Item 1 -->
+        <div class="glass-card p-3.5 rounded-2xl flex items-center justify-between">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-sky-500/20 flex items-center justify-center text-sky-400 text-lg">
+              <i class="fa-brands text-sky-400 fa-telegram"></i>
+            </div>
+            <div>
+              <div class="text-xs font-bold text-white">Join TG Channel</div>
+              <div class="text-[10px] text-amber-400 font-semibold">+1,000 Coins</div>
+            </div>
+          </div>
+          <button id="task-1" onclick="claimTask(1, 1000)" class="px-3 py-1.5 rounded-lg bg-sky-500 hover:bg-sky-600 text-slate-950 font-bold text-xs glass-card-interactive">
+            Claim
+          </button>
+        </div>
+
+        <!-- Task Item 2 -->
+        <div class="glass-card p-3.5 rounded-2xl flex items-center justify-between">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-400 text-lg">
+              <i class="fa-brands fa-twitter"></i>
+            </div>
+            <div>
+              <div class="text-xs font-bold text-white">Follow X / Twitter</div>
+              <div class="text-[10px] text-amber-400 font-semibold">+2,000 Coins</div>
+            </div>
+          </div>
+          <button id="task-2" onclick="claimTask(2, 2000)" class="px-3 py-1.5 rounded-lg bg-sky-500 hover:bg-sky-600 text-slate-950 font-bold text-xs glass-card-interactive">
+            Claim
+          </button>
+        </div>
+
+        <!-- Task Item 3 -->
+        <div class="glass-card p-3.5 rounded-2xl flex items-center justify-between">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-400 text-lg">
+              <i class="fa-solid fa-calendar-check"></i>
+            </div>
+            <div>
+              <div class="text-xs font-bold text-white">Daily Check-In</div>
+              <div class="text-[10px] text-amber-400 font-semibold">+500 Coins</div>
+            </div>
+          </div>
+          <button id="task-3" onclick="claimTask(3, 500)" class="px-3 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-xs glass-card-interactive">
+            Claim
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==================== TAB 4: STATS / PROFILE ==================== -->
+    <section id="tab-stats" class="w-full flex flex-col items-center space-y-3 hidden">
+      <h2 class="text-xl font-bold text-slate-100 flex items-center space-x-2">
+        <i class="fa-solid fa-chart-pie text-purple-400"></i>
+        <span>Player Profile</span>
+      </h2>
+      <p class="text-xs text-slate-400 text-center mb-2">Track your total progress and gameplay stats</p>
+
+      <div class="w-full glass-card p-4 rounded-2xl space-y-3">
+        <div class="flex justify-between items-center border-b border-slate-700/50 pb-2">
+          <span class="text-xs text-slate-400">Total Touches / Taps:</span>
+          <span id="stat-taps" class="text-sm font-bold text-amber-400">0</span>
+        </div>
+        <div class="flex justify-between items-center border-b border-slate-700/50 pb-2">
+          <span class="text-xs text-slate-400">Total Coins Mined:</span>
+          <span id="stat-total" class="text-sm font-bold text-emerald-400">0</span>
+        </div>
+        <div class="flex justify-between items-center border-b border-slate-700/50 pb-2">
+          <span class="text-xs text-slate-400">Current Tap Power:</span>
+          <span id="stat-power" class="text-sm font-bold text-sky-400">1</span>
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="text-xs text-slate-400">Telegram User ID:</span>
+          <span id="stat-tgid" class="text-xs font-mono text-slate-300">Not Connected</span>
+        </div>
+      </div>
+
+      <!-- Instructions Modal Toggle Button -->
+      <button onclick="toggleInstructions()" class="w-full py-3 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-semibold text-slate-300 flex items-center justify-center space-x-2 transition-all">
+        <i class="fa-brands fa-github text-base"></i>
+        <span>Deployment & GitHub Instructions</span>
+      </button>
+    </section>
+
+  </main>
+
+  <!-- BOTTOM FIXED NAVIGATION BAR -->
+  <nav class="fixed bottom-0 left-0 right-0 glass-card border-t border-slate-800/80 px-4 py-2 z-50">
+    <div class="max-w-md mx-auto flex justify-around items-center">
+      
+      <button onclick="switchTab('game')" id="nav-game" class="flex flex-col items-center space-y-1 text-amber-400 transition-colors">
+        <i class="fa-solid fa-gamepad text-lg"></i>
+        <span class="text-[10px] font-medium">Earn</span>
+      </button>
+
+      <button onclick="switchTab('shop')" id="nav-shop" class="flex flex-col items-center space-y-1 text-slate-500 hover:text-slate-300 transition-colors">
+        <i class="fa-solid fa-rocket text-lg"></i>
+        <span class="text-[10px] font-medium">Boosts</span>
+      </button>
+
+      <button onclick="switchTab('tasks')" id="nav-tasks" class="flex flex-col items-center space-y-1 text-slate-500 hover:text-slate-300 transition-colors">
+        <i class="fa-solid fa-list-check text-lg"></i>
+        <span class="text-[10px] font-medium">Tasks</span>
+      </button>
+
+      <button onclick="switchTab('stats')" id="nav-stats" class="flex flex-col items-center space-y-1 text-slate-500 hover:text-slate-300 transition-colors">
+        <i class="fa-solid fa-chart-pie text-lg"></i>
+        <span class="text-[10px] font-medium">Stats</span>
+      </button>
+
+    </div>
+  </nav>
+
+  <!-- GITHUB DEPLOYMENT INSTRUCTIONS MODAL -->
+  <div id="instructions-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+    <div class="glass-card w-full max-w-sm rounded-2xl p-5 relative border border-slate-700 max-h-[85vh] overflow-y-auto no-scrollbar">
+      <button onclick="toggleInstructions()" class="absolute top-4 right-4 text-slate-400 hover:text-white">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+      <h3 class="text-lg font-bold text-amber-400 mb-3 flex items-center space-x-2">
+        <i class="fa-brands fa-github"></i>
+        <span>Deployment Guide</span>
+      </h3>
+      <ol class="text-xs text-slate-300 space-y-3 list-decimal list-inside leading-relaxed">
+        <li><strong>Create Repository:</strong> Create a new public repository on GitHub named <code>telegram-clicker</code>.</li>
+        <li><strong>Upload File:</strong> Save this exact code as <code>index.html</code> and push/upload it to your repository main branch.</li>
+        <li><strong>Enable Pages:</strong> Go to <em>Settings -> Pages</em>, set the Source branch to <code>main</code>, and click <strong>Save</strong>.</li>
+        <li><strong>Copy URL:</strong> Copy the live site link (e.g. <code>https://username.github.io/telegram-clicker/</code>).</li>
+        <li><strong>Create Telegram Bot:</strong> Open Telegram, search for <strong>@BotFather</strong>, send <code>/newbot</code>, and follow the setup prompts.</li>
+        <li><strong>Link Mini-App:</strong> Send <code>/newapp</code> to BotFather, choose your created bot, set the WebApp URL to your GitHub Pages link.</li>
+      </ol>
+      <button onclick="toggleInstructions()" class="w-full mt-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-xl text-xs">
+        Got it!
+      </button>
+    </div>
+  </div>
+
+  <!-- GAME LOGIC SCRIPT -->
+  <script>
+    // ==========================================
+    // STATE MANAGEMENT & DATA MODEL
+    // ==========================================
+    let state = {
+      coins: 0,
+      totalEarned: 0,
+      totalTa
