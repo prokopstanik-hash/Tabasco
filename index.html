@@ -5,16 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Crypto Clicker Telegram Mini App</title>
   
-  <!-- Telegram WebApp SDK -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  
-  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  
-  <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
-  <!-- Google Fonts: Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -24,23 +17,8 @@
       darkMode: 'class',
       theme: {
         extend: {
-          fontFamily: {
-            sans: ['Inter', 'sans-serif'],
-          },
-          colors: {
-            telegram: {
-              bg: '#0f172a',
-              card: 'rgba(30, 41, 59, 0.7)',
-              accent: '#38bdf8',
-              gold: '#f59e0b',
-              purple: '#8b5cf6'
-            }
-          },
-          animation: {
-            'pulse-fast': 'pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-            'bounce-short': 'bounce 0.5s ease-in-out 1',
-            'float-up': 'floatUp 0.8s ease-out forwards',
-          },
+          fontFamily: { sans: ['Inter', 'sans-serif'] },
+          animation: { 'float-up': 'floatUp 0.8s ease-out forwards' },
           keyframes: {
             floatUp: {
               '0%': { opacity: '1', transform: 'translateY(0) scale(1)' },
@@ -53,7 +31,6 @@
   </script>
 
   <style>
-    /* Custom Scrollbar Removal & Mobile Optimization */
     body {
       touch-action: manipulation;
       user-select: none;
@@ -65,8 +42,6 @@
       height: 100vh;
       width: 100vw;
     }
-
-    /* Glassmorphism utility */
     .glass-card {
       background: rgba(30, 41, 59, 0.65);
       backdrop-filter: blur(16px);
@@ -74,21 +49,9 @@
       border: 1px solid rgba(255, 255, 255, 0.08);
       box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
     }
-
-    .glass-card-interactive:active {
-      transform: scale(0.98);
-      opacity: 0.9;
-    }
-
-    /* Coin Glow effect */
-    .coin-glow {
-      box-shadow: 0 0 50px rgba(245, 158, 11, 0.35);
-    }
-    .coin-glow:active {
-      box-shadow: 0 0 80px rgba(245, 158, 11, 0.6);
-    }
-
-    /* Floating Tap Text Marker */
+    .glass-card-interactive:active { transform: scale(0.98); opacity: 0.9; }
+    .coin-glow { box-shadow: 0 0 50px rgba(245, 158, 11, 0.35); }
+    .coin-glow:active { box-shadow: 0 0 80px rgba(245, 158, 11, 0.6); }
     .tap-pop {
       position: absolute;
       pointer-events: none;
@@ -98,71 +61,72 @@
       z-index: 100;
       animation: floatUp 0.8s ease-out forwards;
     }
-
-    /* Hide Scrollbars */
-    .no-scrollbar::-webkit-scrollbar {
-      display: none;
-    }
-    .no-scrollbar {
-      -ms-overflow-style: none;
-      scrollbar-width: none;
-    }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 </head>
 <body class="font-sans antialiased flex flex-col justify-between h-screen w-screen overflow-hidden bg-slate-950 text-slate-100">
 
-  <!-- TOP HEADER / STATS OVERVIEW -->
+  <!-- LANGUAGE SELECTION MODAL -->
+  <div id="lang-modal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-50 flex items-center justify-center p-4">
+    <div class="glass-card w-full max-w-xs rounded-2xl p-6 text-center border border-slate-700 space-y-4">
+      <div class="w-12 h-12 mx-auto rounded-full bg-amber-500/20 flex items-center justify-center text-amber-400 text-xl border border-amber-500/30">
+        <i class="fa-solid fa-globe"></i>
+      </div>
+      <h3 class="text-lg font-bold text-white">Select Language / Виберіть мову</h3>
+      <div class="space-y-2.5 pt-2">
+        <button onclick="setLanguage('ua')" class="w-full py-3 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 font-semibold text-sm text-amber-300 transition-all">🇺🇦 Українська</button>
+        <button onclick="setLanguage('ru')" class="w-full py-3 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 font-semibold text-sm text-slate-200 transition-all">🇷🇺 Русский</button>
+        <button onclick="setLanguage('en')" class="w-full py-3 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 font-semibold text-sm text-cyan-300 transition-all">🇬🇧 English</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOP HEADER -->
   <header class="w-full pt-4 px-4 flex justify-between items-center z-10">
     <div class="flex items-center space-x-2 glass-card px-3 py-1.5 rounded-full">
-      <div id="user-avatar" class="w-7 h-7 rounded-full bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center text-xs font-bold text-white uppercase overflow-hidden">
-        TG
-      </div>
-      <span id="user-name" class="text-xs font-medium truncate max-w-[100px]">Player</span>
+      <div id="user-avatar" class="w-7 h-7 rounded-full bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center text-xs font-bold text-white uppercase overflow-hidden">TG</div>
+      <span id="user-name" class="text-xs font-medium truncate max-w-[90px]">Player</span>
     </div>
 
-    <!-- Rank Badge -->
-    <div class="glass-card px-3 py-1.5 rounded-full flex items-center space-x-2">
-      <i class="fa-solid fa-trophy text-amber-400 text-xs"></i>
-      <span id="user-rank" class="text-xs font-semibold text-amber-300">Bronze</span>
+    <div class="flex items-center space-x-2">
+      <button onclick="openLangModal()" class="glass-card px-2.5 py-1.5 rounded-full text-xs text-slate-300 hover:text-white flex items-center space-x-1">
+        <i class="fa-solid fa-globe text-amber-400"></i>
+        <span id="current-lang-code" class="uppercase font-bold">UA</span>
+      </button>
+      <div class="glass-card px-3 py-1.5 rounded-full flex items-center space-x-1.5">
+        <i class="fa-solid fa-trophy text-amber-400 text-xs"></i>
+        <span id="user-rank" class="text-xs font-semibold text-amber-300">Bronze</span>
+      </div>
     </div>
   </header>
-
-  <!-- MAIN VIEWPORT CONTAINER -->
   <main class="flex-1 relative overflow-y-auto no-scrollbar pb-24 pt-2 px-4 flex flex-col justify-center items-center">
 
-    <!-- ==================== TAB 1: CLICKER GAME ==================== -->
+    <!-- TAB 1: GAME -->
     <section id="tab-game" class="w-full flex flex-col items-center justify-between h-full py-2">
-      
-      <!-- Balance Display -->
       <div class="flex flex-col items-center mt-2">
         <div class="flex items-center justify-center space-x-3">
           <i class="fa-solid fa-coins text-4xl text-amber-400 drop-shadow-[0_0_15px_rgba(245,158,11,0.5)]"></i>
           <span id="balance" class="text-5xl font-extrabold tracking-tight text-white">0</span>
         </div>
-        
-        <!-- Passive Income Display -->
         <div class="mt-2 text-xs font-medium text-slate-400 flex items-center space-x-1.5 bg-slate-900/60 px-3 py-1 rounded-full border border-slate-800">
           <i class="fa-solid fa-bolt text-emerald-400"></i>
-          <span>Passive Income: <strong id="pnl-rate" class="text-emerald-400">+0</strong>/sec</span>
+          <span data-i18n="passive_text">Passive Income:</span> <strong id="pnl-rate" class="text-emerald-400">+0</strong>/sec
         </div>
       </div>
 
-      <!-- Rank Progress Bar -->
       <div class="w-full max-w-xs mt-3">
         <div class="flex justify-between text-[10px] text-slate-400 font-medium mb-1 px-1">
           <span id="rank-current-title">Bronze</span>
-          <span id="rank-progress-text">0 / 1,000</span>
+          <span id="rank-progress-text">0 / 5,000</span>
         </div>
         <div class="w-full bg-slate-800/80 rounded-full h-2 overflow-hidden p-0.5 border border-slate-700/50">
           <div id="rank-bar" class="bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-300 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
         </div>
       </div>
 
-      <!-- Main Clicker Coin -->
       <div class="relative my-auto flex items-center justify-center">
         <div class="absolute w-64 h-64 rounded-full bg-amber-500/10 animate-ping pointer-events-none"></div>
-        <div class="absolute w-72 h-72 rounded-full bg-blue-500/5 blur-xl pointer-events-none"></div>
-
         <button id="coin-btn" class="relative w-64 h-64 rounded-full bg-gradient-to-b from-amber-300 via-amber-500 to-amber-700 p-2 coin-glow transition-transform duration-75 active:scale-95 focus:outline-none select-none flex items-center justify-center cursor-pointer border-4 border-amber-200/50 shadow-2xl">
           <div class="w-full h-full rounded-full bg-gradient-to-tr from-amber-600 via-amber-400 to-yellow-200 flex items-center justify-center border-2 border-amber-300 shadow-inner pointer-events-none">
             <i class="fa-solid fa-bolt-lightning text-8xl text-amber-900/80 drop-shadow-lg"></i>
@@ -170,163 +134,138 @@
         </button>
       </div>
 
-      <!-- Energy System -->
       <div class="w-full max-w-xs flex flex-col items-center">
         <div class="w-full flex justify-between items-center mb-1 px-1 text-xs">
           <div class="flex items-center space-x-1.5 text-amber-400 font-semibold">
             <i class="fa-solid fa-charging-station text-sm"></i>
             <span id="energy-text">1000 / 1000</span>
           </div>
-          <span class="text-[10px] text-slate-400">Regenerates continuous</span>
+          <span class="text-[10px] text-slate-400" data-i18n="energy_regen">Regenerates continuous</span>
         </div>
         <div class="w-full bg-slate-800/80 rounded-full h-3 overflow-hidden border border-slate-700/50 p-0.5">
           <div id="energy-bar" class="bg-gradient-to-r from-amber-500 to-yellow-400 h-full rounded-full transition-all duration-150" style="width: 100%"></div>
         </div>
       </div>
-
     </section>
 
-    <!-- ==================== TAB 2: SHOP / BOOSTS ==================== -->
+    <!-- TAB 2: SHOP -->
     <section id="tab-shop" class="w-full flex flex-col items-center space-y-3 hidden">
       <h2 class="text-xl font-bold text-slate-100 flex items-center space-x-2">
         <i class="fa-solid fa-rocket text-amber-400"></i>
-        <span>Boosters & Upgrades</span>
+        <span data-i18n="shop_title">Boosters & Upgrades</span>
       </h2>
-      <p class="text-xs text-slate-400 text-center mb-2">Upgrade your mining power to earn faster!</p>
+      <p class="text-xs text-slate-400 text-center mb-2" data-i18n="shop_subtitle">Upgrade your mining power to earn faster!</p>
 
       <div class="w-full space-y-2.5">
-        
         <div class="glass-card p-3.5 rounded-2xl flex items-center justify-between">
           <div class="flex items-center space-x-3">
-            <div class="w-12 h-12 rounded-xl bg-amber-500/20 flex items-center justify-center text-amber-400 text-xl border border-amber-500/30">
-              <i class="fa-solid fa-hand-pointer"></i>
-            </div>
+            <div class="w-12 h-12 rounded-xl bg-amber-500/20 flex items-center justify-center text-amber-400 text-xl border border-amber-500/30"><i class="fa-solid fa-hand-pointer"></i></div>
             <div>
-              <div class="text-sm font-bold text-white">Multitap</div>
-              <div class="text-[11px] text-slate-400">Increase tap limit by <span id="tap-power-increase" class="text-emerald-400">+1</span></div>
-              <div class="text-xs font-semibold text-amber-400 mt-0.5">Lvl <span id="tap-lvl">1</span></div>
+              <div class="text-sm font-bold text-white" data-i18n="multitap_name">Multitap</div>
+              <div class="text-[11px] text-slate-400"><span data-i18n="multitap_desc">Increase tap limit by</span> <span class="text-emerald-400">+1</span></div>
+              <div class="text-xs font-semibold text-amber-400 mt-0.5"><span data-i18n="lvl">Lvl</span> <span id="tap-lvl">1</span></div>
             </div>
           </div>
-          <button id="buy-tap" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-slate-950 font-bold text-xs shadow-lg glass-card-interactive flex items-center space-x-1">
-            <i class="fa-solid fa-coins text-[10px]"></i>
-            <span id="tap-cost">100</span>
+          <button id="buy-tap" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-500 text-slate-950 font-bold text-xs shadow-lg glass-card-interactive flex items-center space-x-1">
+            <i class="fa-solid fa-coins text-[10px]"></i><span id="tap-cost">100</span>
           </button>
         </div>
 
         <div class="glass-card p-3.5 rounded-2xl flex items-center justify-between">
           <div class="flex items-center space-x-3">
-            <div class="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-400 text-xl border border-blue-500/30">
-              <i class="fa-solid fa-battery-full"></i>
-            </div>
+            <div class="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-400 text-xl border border-blue-500/30"><i class="fa-solid fa-battery-full"></i></div>
             <div>
-              <div class="text-sm font-bold text-white">Energy Limit</div>
-              <div class="text-[11px] text-slate-400">Increase max energy by <span class="text-emerald-400">+500</span></div>
-              <div class="text-xs font-semibold text-blue-400 mt-0.5">Lvl <span id="energy-lvl">1</span></div>
+              <div class="text-sm font-bold text-white" data-i18n="energy_limit_name">Energy Limit</div>
+              <div class="text-[11px] text-slate-400"><span data-i18n="energy_limit_desc">Increase max energy by</span> <span class="text-emerald-400">+500</span></div>
+              <div class="text-xs font-semibold text-blue-400 mt-0.5"><span data-i18n="lvl">Lvl</span> <span id="energy-lvl">1</span></div>
             </div>
           </div>
-          <button id="buy-energy" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-slate-950 font-bold text-xs shadow-lg glass-card-interactive flex items-center space-x-1">
-            <i class="fa-solid fa-coins text-[10px]"></i>
-            <span id="energy-cost">200</span>
+          <button id="buy-energy" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-500 text-slate-950 font-bold text-xs shadow-lg glass-card-interactive flex items-center space-x-1">
+            <i class="fa-solid fa-coins text-[10px]"></i><span id="energy-cost">200</span>
           </button>
         </div>
 
         <div class="glass-card p-3.5 rounded-2xl flex items-center justify-between">
           <div class="flex items-center space-x-3">
-            <div class="w-12 h-12 rounded-xl bg-purple-500/20 flex items-center justify-center text-purple-400 text-xl border border-purple-500/30">
-              <i class="fa-solid fa-robot"></i>
-            </div>
+            <div class="w-12 h-12 rounded-xl bg-purple-500/20 flex items-center justify-center text-purple-400 text-xl border border-purple-500/30"><i class="fa-solid fa-robot"></i></div>
             <div>
-              <div class="text-sm font-bold text-white">Auto-Mining Bot</div>
-              <div class="text-[11px] text-slate-400">Earns <span class="text-emerald-400">+5</span> coins / sec</div>
-              <div class="text-xs font-semibold text-purple-400 mt-0.5">Lvl <span id="passive-lvl">0</span></div>
+              <div class="text-sm font-bold text-white" data-i18n="bot_name">Auto-Mining Bot</div>
+              <div class="text-[11px] text-slate-400"><span data-i18n="bot_desc">Earns</span> <span class="text-emerald-400">+5</span> <span data-i18n="coins_sec">coins / sec</span></div>
+              <div class="text-xs font-semibold text-purple-400 mt-0.5"><span data-i18n="lvl">Lvl</span> <span id="passive-lvl">0</span></div>
             </div>
           </div>
-          <button id="buy-passive" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-slate-100 font-bold text-xs shadow-lg glass-card-interactive flex items-center space-x-1">
-            <i class="fa-solid fa-coins text-[10px] text-amber-300"></i>
-            <span id="passive-cost">500</span>
+          <button id="buy-passive" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-500 text-slate-100 font-bold text-xs shadow-lg glass-card-interactive flex items-center space-x-1">
+            <i class="fa-solid fa-coins text-[10px] text-amber-300"></i><span id="passive-cost">500</span>
           </button>
         </div>
-
       </div>
     </section>
 
-    <!-- ==================== TAB 3: TASKS ==================== -->
+    <!-- TAB 3: TASKS -->
     <section id="tab-tasks" class="w-full flex flex-col items-center space-y-3 hidden">
       <h2 class="text-xl font-bold text-slate-100 flex items-center space-x-2">
         <i class="fa-solid fa-list-check text-sky-400"></i>
-        <span>Earn Rewards</span>
+        <span data-i18n="tasks_title">Earn Rewards</span>
       </h2>
-      <p class="text-xs text-slate-400 text-center mb-2">Complete quick tasks to get free coins instantly!</p>
+      <p class="text-xs text-slate-400 text-center mb-2" data-i18n="tasks_subtitle">Complete quick tasks to get free coins instantly!</p>
 
       <div class="w-full space-y-2.5">
         <div class="glass-card p-3.5 rounded-2xl flex items-center justify-between">
           <div class="flex items-center space-x-3">
-            <div class="w-10 h-10 rounded-xl bg-sky-500/20 flex items-center justify-center text-sky-400 text-lg">
-              <i class="fa-brands text-sky-400 fa-telegram"></i>
-            </div>
+            <div class="w-10 h-10 rounded-xl bg-sky-500/20 flex items-center justify-center text-sky-400 text-lg"><i class="fa-brands text-sky-400 fa-telegram"></i></div>
             <div>
-              <div class="text-xs font-bold text-white">Join TG Channel</div>
+              <div class="text-xs font-bold text-white" data-i18n="task_1">Join TG Channel</div>
               <div class="text-[10px] text-amber-400 font-semibold">+1,000 Coins</div>
             </div>
           </div>
-          <button id="task-1" onclick="claimTask(1, 1000)" class="px-3 py-1.5 rounded-lg bg-sky-500 hover:bg-sky-600 text-slate-950 font-bold text-xs glass-card-interactive">
-            Claim
-          </button>
+          <button id="task-1" onclick="claimTask(1, 1000)" class="px-3 py-1.5 rounded-lg bg-sky-500 hover:bg-sky-600 text-slate-950 font-bold text-xs glass-card-interactive" data-i18n="claim_btn">Claim</button>
         </div>
 
         <div class="glass-card p-3.5 rounded-2xl flex items-center justify-between">
           <div class="flex items-center space-x-3">
-            <div class="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-400 text-lg">
-              <i class="fa-brands fa-twitter"></i>
-            </div>
+            <div class="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-400 text-lg"><i class="fa-brands fa-twitter"></i></div>
             <div>
-              <div class="text-xs font-bold text-white">Follow X / Twitter</div>
+              <div class="text-xs font-bold text-white" data-i18n="task_2">Follow X / Twitter</div>
               <div class="text-[10px] text-amber-400 font-semibold">+2,000 Coins</div>
             </div>
           </div>
-          <button id="task-2" onclick="claimTask(2, 2000)" class="px-3 py-1.5 rounded-lg bg-sky-500 hover:bg-sky-600 text-slate-950 font-bold text-xs glass-card-interactive">
-            Claim
-          </button>
+          <button id="task-2" onclick="claimTask(2, 2000)" class="px-3 py-1.5 rounded-lg bg-sky-500 hover:bg-sky-600 text-slate-950 font-bold text-xs glass-card-interactive" data-i18n="claim_btn">Claim</button>
         </div>
 
         <div class="glass-card p-3.5 rounded-2xl flex items-center justify-between">
           <div class="flex items-center space-x-3">
-            <div class="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-400 text-lg">
-              <i class="fa-solid fa-calendar-check"></i>
-            </div>
+            <div class="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-400 text-lg"><i class="fa-solid fa-calendar-check"></i></div>
             <div>
-              <div class="text-xs font-bold text-white">Daily Check-In</div>
+              <div class="text-xs font-bold text-white" data-i18n="task_3">Daily Check-In</div>
               <div class="text-[10px] text-amber-400 font-semibold">+500 Coins</div>
             </div>
           </div>
-          <button id="task-3" onclick="claimTask(3, 500)" class="px-3 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-xs glass-card-interactive">
-            Claim
-          </button>
+          <button id="task-3" onclick="claimTask(3, 500)" class="px-3 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-xs glass-card-interactive" data-i18n="claim_btn">Claim</button>
         </div>
       </div>
     </section>
 
-    <!-- ==================== TAB 4: STATS ==================== -->
+    <!-- TAB 4: STATS -->
     <section id="tab-stats" class="w-full flex flex-col items-center space-y-3 hidden">
       <h2 class="text-xl font-bold text-slate-100 flex items-center space-x-2">
         <i class="fa-solid fa-chart-pie text-purple-400"></i>
-        <span>Player Profile</span>
+        <span data-i18n="stats_title">Player Profile</span>
       </h2>
       <div class="w-full glass-card p-4 rounded-2xl space-y-3">
         <div class="flex justify-between items-center border-b border-slate-700/50 pb-2">
-          <span class="text-xs text-slate-400">Total Touches / Taps:</span>
+          <span class="text-xs text-slate-400" data-i18n="stat_taps">Total Touches / Taps:</span>
           <span id="stat-taps" class="text-sm font-bold text-amber-400">0</span>
         </div>
         <div class="flex justify-between items-center border-b border-slate-700/50 pb-2">
-          <span class="text-xs text-slate-400">Total Coins Mined:</span>
+          <span class="text-xs text-slate-400" data-i18n="stat_total">Total Coins Mined:</span>
           <span id="stat-total" class="text-sm font-bold text-emerald-400">0</span>
         </div>
         <div class="flex justify-between items-center border-b border-slate-700/50 pb-2">
-          <span class="text-xs text-slate-400">Current Tap Power:</span>
+          <span class="text-xs text-slate-400" data-i18n="stat_power">Current Tap Power:</span>
           <span id="stat-power" class="text-sm font-bold text-sky-400">1</span>
         </div>
         <div class="flex justify-between items-center">
-          <span class="text-xs text-slate-400">Telegram User ID:</span>
+          <span class="text-xs text-slate-400" data-i18n="stat_id">Telegram User ID:</span>
           <span id="stat-tgid" class="text-xs font-mono text-slate-300">Not Connected</span>
         </div>
       </div>
@@ -334,29 +273,122 @@
 
   </main>
 
-  <!-- BOTTOM NAVIGATION -->
   <nav class="fixed bottom-0 left-0 right-0 glass-card border-t border-slate-800/80 px-4 py-2 z-50">
     <div class="max-w-md mx-auto flex justify-around items-center">
       <button onclick="switchTab('game')" id="nav-game" class="flex flex-col items-center space-y-1 text-amber-400 transition-colors">
         <i class="fa-solid fa-gamepad text-lg"></i>
-        <span class="text-[10px] font-medium">Earn</span>
+        <span class="text-[10px] font-medium" data-i18n="nav_earn">Earn</span>
       </button>
       <button onclick="switchTab('shop')" id="nav-shop" class="flex flex-col items-center space-y-1 text-slate-500 hover:text-slate-300 transition-colors">
         <i class="fa-solid fa-rocket text-lg"></i>
-        <span class="text-[10px] font-medium">Boosts</span>
+        <span class="text-[10px] font-medium" data-i18n="nav_boosts">Boosts</span>
       </button>
       <button onclick="switchTab('tasks')" id="nav-tasks" class="flex flex-col items-center space-y-1 text-slate-500 hover:text-slate-300 transition-colors">
         <i class="fa-solid fa-list-check text-lg"></i>
-        <span class="text-[10px] font-medium">Tasks</span>
+        <span class="text-[10px] font-medium" data-i18n="nav_tasks">Tasks</span>
       </button>
       <button onclick="switchTab('stats')" id="nav-stats" class="flex flex-col items-center space-y-1 text-slate-500 hover:text-slate-300 transition-colors">
         <i class="fa-solid fa-chart-pie text-lg"></i>
-        <span class="text-[10px] font-medium">Stats</span>
+        <span class="text-[10px] font-medium" data-i18n="nav_stats">Stats</span>
       </button>
     </div>
   </nav>
-  <!-- GAME LOGIC SCRIPT -->
   <script>
+    const langs = {
+      ua: {
+        passive_text: "Пасивний дохід:",
+        energy_regen: "Відновлення постійне",
+        shop_title: "Бустери та покращення",
+        shop_subtitle: "Покращуйте свій майнінг, щоб заробляти швидше!",
+        multitap_name: "Мультитап",
+        multitap_desc: "Збільшити силу тапу на",
+        energy_limit_name: "Лімит енергії",
+        energy_limit_desc: "Збільшити макс. енергію на",
+        bot_name: "Авто-бот",
+        bot_desc: "Збирає",
+        coins_sec: "монет / сек",
+        lvl: "Рівень",
+        tasks_title: "Завдання та нагороди",
+        tasks_subtitle: "Виконуйте швидкі завдання та отримуйте бонуси!",
+        task_1: "Підпишись на телеграм канал",
+        task_2: "Підпишись на X / Twitter",
+        task_3: "Щоденний бонус",
+        claim_btn: "Забрати",
+        claimed_btn: "Отримано",
+        stats_title: "Профіль гравця",
+        stat_taps: "Всього кліків:",
+        stat_total: "Всього зароблено монет:",
+        stat_power: "Поточна сила тапу:",
+        stat_id: "ID користувача Telegram:",
+        nav_earn: "Грати",
+        nav_boosts: "Бусти",
+        nav_tasks: "Завдання",
+        nav_stats: "Профіль"
+      },
+      ru: {
+        passive_text: "Пассивный доход:",
+        energy_regen: "Восстановление постоянное",
+        shop_title: "Бустеры и прокачка",
+        shop_subtitle: "Улучшайте майнинг, чтобы зарабатывать быстрее!",
+        multitap_name: "Мультитап",
+        multitap_desc: "Увеличить силу тапа на",
+        energy_limit_name: "Лимит энергии",
+        energy_limit_desc: "Увеличить макс. энергию на",
+        bot_name: "Авто-бот",
+        bot_desc: "Приносит",
+        coins_sec: "монет / сек",
+        lvl: "Уровень",
+        tasks_title: "Задания и награды",
+        tasks_subtitle: "Выполняйте быстрые задания и получайте бонусы!",
+        task_1: "Подпишись на телеграм канал",
+        task_2: "Подпишись на X / Twitter",
+        task_3: "Ежедневный бонус",
+        claim_btn: "Забрать",
+        claimed_btn: "Получено",
+        stats_title: "Профиль игрока",
+        stat_taps: "Всего кликов:",
+        stat_total: "Всего заработано монет:",
+        stat_power: "Текущая сила тапа:",
+        stat_id: "ID пользователя Telegram:",
+        nav_earn: "Играть",
+        nav_boosts: "Бусты",
+        nav_tasks: "Задания",
+        nav_stats: "Профиль"
+      },
+      en: {
+        passive_text: "Passive Income:",
+        energy_regen: "Regenerates continuous",
+        shop_title: "Boosters & Upgrades",
+        shop_subtitle: "Upgrade your mining power to earn faster!",
+        multitap_name: "Multitap",
+        multitap_desc: "Increase tap limit by",
+        energy_limit_name: "Energy Limit",
+        energy_limit_desc: "Increase max energy by",
+        bot_name: "Auto-Mining Bot",
+        bot_desc: "Earns",
+        coins_sec: "coins / sec",
+        lvl: "Lvl",
+        tasks_title: "Earn Rewards",
+        tasks_subtitle: "Complete quick tasks to get free coins instantly!",
+        task_1: "Join TG Channel",
+        task_2: "Follow X / Twitter",
+        task_3: "Daily Check-In",
+        claim_btn: "Claim",
+        claimed_btn: "Claimed",
+        stats_title: "Player Profile",
+        stat_taps: "Total Touches / Taps:",
+        stat_total: "Total Coins Mined:",
+        stat_power: "Current Tap Power:",
+        stat_id: "Telegram User ID:",
+        nav_earn: "Earn",
+        nav_boosts: "Boosts",
+        nav_tasks: "Tasks",
+        nav_stats: "Stats"
+      }
+    };
+
+    let currentLang = localStorage.getItem('crypto_clicker_lang') || null;
+
     let state = {
       coins: 0,
       totalEarned: 0,
@@ -375,12 +407,12 @@
     };
 
     const ranks = [
-      { name: "Bronze", min: 0, max: 5000, color: "text-amber-300" },
-      { name: "Silver", min: 5000, max: 25000, color: "text-slate-300" },
-      { name: "Gold", min: 25000, max: 100000, color: "text-yellow-400" },
-      { name: "Diamond", min: 100000, max: 500000, color: "text-cyan-400" },
-      { name: "Master", min: 500000, max: 2000000, color: "text-purple-400" },
-      { name: "Grandmaster", min: 2000000, max: 10000000, color: "text-rose-400" }
+      { name: "Bronze", min: 0, max: 5000 },
+      { name: "Silver", min: 5000, max: 25000 },
+      { name: "Gold", min: 25000, max: 100000 },
+      { name: "Diamond", min: 100000, max: 500000 },
+      { name: "Master", min: 500000, max: 2000000 },
+      { name: "Grandmaster", min: 2000000, max: 10000000 }
     ];
 
     const tg = window.Telegram?.WebApp;
@@ -389,22 +421,14 @@
       if (tg) {
         tg.ready();
         tg.expand();
-        
         window.TelegramHaptic = (style = 'medium') => {
-          try {
-            if (tg.HapticFeedback) {
-              tg.HapticFeedback.impactOccurred(style);
-            }
-          } catch (e) {}
+          try { if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred(style); } catch (e) {}
         };
-
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
           const user = tg.initDataUnsafe.user;
           const fullName = `${user.first_name || ''} ${user.last_name || ''}`.trim() || 'Player';
-          
           document.getElementById('user-name').innerText = fullName;
           document.getElementById('stat-tgid').innerText = user.id;
-          
           const avatar = document.getElementById('user-avatar');
           if (user.photo_url) {
             avatar.innerHTML = `<img src="${user.photo_url}" class="w-full h-full rounded-full object-cover">`;
@@ -417,29 +441,43 @@
       }
     }
 
-    function saveGame() {
-      localStorage.setItem('crypto_clicker_state', JSON.stringify(state));
+    function setLanguage(lang) {
+      currentLang = lang;
+      localStorage.setItem('crypto_clicker_lang', lang);
+      document.getElementById('current-lang-code').innerText = lang;
+      document.getElementById('lang-modal').classList.add('hidden');
+      applyLocalization();
     }
 
+    function openLangModal() {
+      document.getElementById('lang-modal').classList.remove('hidden');
+    }
+
+    function applyLocalization() {
+      const t = langs[currentLang] || langs.ua;
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (t[key]) el.innerText = t[key];
+      });
+      state.completedTasks.forEach(id => {
+        const btn = document.getElementById(`task-${id}`);
+        if (btn) btn.innerText = t.claimed_btn;
+      });
+    }
+
+    function saveGame() { localStorage.setItem('crypto_clicker_state', JSON.stringify(state)); }
     function loadGame() {
       const saved = localStorage.getItem('crypto_clicker_state');
-      if (saved) {
-        try {
-          state = Object.assign({}, state, JSON.parse(saved));
-        } catch (e) {}
-      }
+      if (saved) { try { state = Object.assign({}, state, JSON.parse(saved)); } catch (e) {} }
     }
 
     const coinBtn = document.getElementById('coin-btn');
-    
     coinBtn.addEventListener('pointerdown', (e) => {
       e.preventDefault();
-      
       if (state.energy < state.tapPower) {
         window.TelegramHaptic('heavy');
         return;
       }
-
       state.energy -= state.tapPower;
       state.coins += state.tapPower;
       state.totalEarned += state.tapPower;
@@ -447,7 +485,6 @@
 
       window.TelegramHaptic('light');
       createTapPopup(e.clientX, e.clientY, `+${state.tapPower}`);
-
       updateUI();
       saveGame();
     });
@@ -456,14 +493,13 @@
       const pop = document.createElement('div');
       pop.className = 'tap-pop';
       pop.innerText = text;
-      
       const offsetX = (Math.random() - 0.5) * 40;
       pop.style.left = `${(x || window.innerWidth / 2) + offsetX}px`;
       pop.style.top = `${(y || window.innerHeight / 2) - 30}px`;
-      
       document.body.appendChild(pop);
       setTimeout(() => pop.remove(), 800);
     }
+
     document.getElementById('buy-tap').addEventListener('click', () => {
       if (state.coins >= state.tapPowerCost) {
         state.coins -= state.tapPowerCost;
@@ -473,9 +509,7 @@
         window.TelegramHaptic('medium');
         updateUI();
         saveGame();
-      } else {
-        window.TelegramHaptic('heavy');
-      }
+      } else { window.TelegramHaptic('heavy'); }
     });
 
     document.getElementById('buy-energy').addEventListener('click', () => {
@@ -488,9 +522,7 @@
         window.TelegramHaptic('medium');
         updateUI();
         saveGame();
-      } else {
-        window.TelegramHaptic('heavy');
-      }
+      } else { window.TelegramHaptic('heavy'); }
     });
 
     document.getElementById('buy-passive').addEventListener('click', () => {
@@ -502,37 +534,31 @@
         window.TelegramHaptic('medium');
         updateUI();
         saveGame();
-      } else {
-        window.TelegramHaptic('heavy');
-      }
+      } else { window.TelegramHaptic('heavy'); }
     });
 
     function claimTask(taskId, reward) {
       if (state.completedTasks.includes(taskId)) return;
-      
       state.completedTasks.push(taskId);
       state.coins += reward;
       state.totalEarned += reward;
-      
       window.TelegramHaptic('success');
       
+      const t = langs[currentLang] || langs.ua;
       const btn = document.getElementById(`task-${taskId}`);
       if (btn) {
-        btn.innerText = "Claimed";
+        btn.innerText = t.claimed_btn;
         btn.className = "px-3 py-1.5 rounded-lg bg-slate-800 text-slate-500 font-bold text-xs cursor-default";
         btn.disabled = true;
       }
-      
       updateUI();
       saveGame();
     }
 
     function switchTab(tabName) {
-      const tabs = ['game', 'shop', 'tasks', 'stats'];
-      tabs.forEach(t => {
+      ['game', 'shop', 'tasks', 'stats'].forEach(t => {
         const section = document.getElementById(`tab-${t}`);
         const navBtn = document.getElementById(`nav-${t}`);
-        
         if (t === tabName) {
           section.classList.remove('hidden');
           navBtn.className = "flex flex-col items-center space-y-1 text-amber-400 transition-colors";
@@ -547,18 +573,15 @@
     function updateUI() {
       document.getElementById('balance').innerText = state.coins.toLocaleString();
       document.getElementById('pnl-rate').innerText = `+${state.passiveRate}`;
-
       document.getElementById('energy-text').innerText = `${state.energy} / ${state.maxEnergy}`;
+      
       const energyPercent = Math.min(100, (state.energy / state.maxEnergy) * 100);
       document.getElementById('energy-bar').style.width = `${energyPercent}%`;
 
       document.getElementById('tap-cost').innerText = state.tapPowerCost.toLocaleString();
       document.getElementById('tap-lvl').innerText = state.tapPowerLvl;
-      document.getElementById('tap-power-increase').innerText = `+1`;
-
       document.getElementById('energy-cost').innerText = state.maxEnergyCost.toLocaleString();
       document.getElementById('energy-lvl').innerText = state.maxEnergyLvl;
-
       document.getElementById('passive-cost').innerText = state.passiveCost.toLocaleString();
       document.getElementById('passive-lvl').innerText = state.passiveLvl;
 
@@ -568,7 +591,6 @@
 
       let currentRank = ranks[0];
       let nextRankMin = ranks[1].min;
-      
       for (let i = ranks.length - 1; i >= 0; i--) {
         if (state.totalEarned >= ranks[i].min) {
           currentRank = ranks[i];
@@ -584,10 +606,11 @@
       const rankPercent = Math.min(100, (state.totalEarned / nextRankMin) * 100);
       document.getElementById('rank-bar').style.width = `${rankPercent}%`;
 
+      const t = langs[currentLang] || langs.ua;
       state.completedTasks.forEach(id => {
         const btn = document.getElementById(`task-${id}`);
         if (btn) {
-          btn.innerText = "Claimed";
+          btn.innerText = t.claimed_btn;
           btn.className = "px-3 py-1.5 rounded-lg bg-slate-800 text-slate-500 font-bold text-xs cursor-default";
           btn.disabled = true;
         }
@@ -599,11 +622,9 @@
         state.coins += state.passiveRate;
         state.totalEarned += state.passiveRate;
       }
-
       if (state.energy < state.maxEnergy) {
         state.energy = Math.min(state.maxEnergy, state.energy + Math.max(1, Math.floor(state.maxEnergy * 0.05)));
       }
-
       updateUI();
       saveGame();
     }, 1000);
@@ -611,6 +632,13 @@
     window.addEventListener('DOMContentLoaded', () => {
       initTelegram();
       loadGame();
+      if (!currentLang) {
+        openLangModal();
+      } else {
+        document.getElementById('current-lang-code').innerText = currentLang;
+        document.getElementById('lang-modal').classList.add('hidden');
+        applyLocalization();
+      }
       updateUI();
     });
   </script>
