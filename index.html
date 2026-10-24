@@ -136,7 +136,7 @@
         </div>
         <div class="mt-2 text-xs font-medium text-slate-400 flex items-center space-x-1.5 bg-slate-900/60 px-3 py-1 rounded-full border border-slate-800">
           <i class="fa-solid fa-bolt text-emerald-400"></i>
-          <span data-i18n="passive_text">Passive Income:</span> <strong id="pnl-rate" class="text-emerald-400">+0</strong>/sec
+          <span data-i18n="passive_text">Пасивний дохід:</span> <strong id="pnl-rate" class="text-emerald-400">+0</strong>/sec
         </div>
       </div>
 
@@ -150,10 +150,9 @@
         </div>
       </div>
 
-      <!-- MAIN CLICKER COIN (Рівна та чітка по центру) -->
+      <!-- ПРОСТО ЧИСТА МОНЕТКА -->
       <div class="relative my-auto flex items-center justify-center">
-        <div class="absolute w-64 h-64 rounded-full bg-amber-500/10 animate-ping pointer-events-none"></div>
-        <button id="coin-btn" class="focus:outline-none select-none cursor-pointer">
+        <button id="coin-btn" class="transition-transform duration-75 focus:outline-none select-none cursor-pointer">
           <img src="1792798845010.png" alt="Coin">
         </button>
       </div>
@@ -164,7 +163,7 @@
             <i class="fa-solid fa-charging-station text-sm"></i>
             <span id="energy-text">1000 / 1000</span>
           </div>
-          <span class="text-[10px] text-slate-400" data-i18n="energy_regen">Regenerates continuous</span>
+          <span class="text-[10px] text-slate-400" data-i18n="energy_regen">Відновлення постійне</span>
         </div>
         <div class="w-full bg-slate-800/80 rounded-full h-3 overflow-hidden border border-slate-700/50 p-0.5">
           <div id="energy-bar" class="bg-gradient-to-r from-amber-500 to-yellow-400 h-full rounded-full transition-all duration-150" style="width: 100%"></div>
@@ -176,18 +175,18 @@
     <section id="tab-shop" class="w-full flex flex-col items-center space-y-3 hidden">
       <h2 class="text-xl font-bold text-slate-100 flex items-center space-x-2">
         <i class="fa-solid fa-rocket text-amber-400"></i>
-        <span data-i18n="shop_title">Boosters & Upgrades</span>
+        <span data-i18n="shop_title">Бустери та покращення</span>
       </h2>
-      <p class="text-xs text-slate-400 text-center mb-2" data-i18n="shop_subtitle">Upgrade your mining power to earn faster!</p>
+      <p class="text-xs text-slate-400 text-center mb-2" data-i18n="shop_subtitle">Покращуйте свій майнінг, щоб заробляти швидше!</p>
 
       <div class="w-full space-y-2.5">
         <div class="glass-card p-3.5 rounded-2xl flex items-center justify-between">
           <div class="flex items-center space-x-3">
             <div class="w-12 h-12 rounded-xl bg-amber-500/20 flex items-center justify-center text-amber-400 text-xl border border-amber-500/30"><i class="fa-solid fa-hand-pointer"></i></div>
             <div>
-              <div class="text-sm font-bold text-white" data-i18n="multitap_name">Multitap</div>
-              <div class="text-[11px] text-slate-400"><span data-i18n="multitap_desc">Increase tap limit by</span> <span class="text-emerald-400">+1</span></div>
-              <div class="text-xs font-semibold text-amber-400 mt-0.5"><span data-i18n="lvl">Lvl</span> <span id="tap-lvl">1</span></div>
+              <div class="text-sm font-bold text-white" data-i18n="multitap_name">Мультитап</div>
+              <div class="text-[11px] text-slate-400"><span data-i18n="multitap_desc">Збільшити силу тапу на</span> <span class="text-emerald-400">+1</span></div>
+              <div class="text-xs font-semibold text-amber-400 mt-0.5"><span data-i18n="lvl">Рівень</span> <span id="tap-lvl">1</span></div>
             </div>
           </div>
           <button id="buy-tap" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-500 text-slate-950 font-bold text-xs shadow-lg glass-card-interactive flex items-center space-x-1">
@@ -199,9 +198,9 @@
           <div class="flex items-center space-x-3">
             <div class="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-400 text-xl border border-blue-500/30"><i class="fa-solid fa-battery-full"></i></div>
             <div>
-              <div class="text-sm font-bold text-white" data-i18n="energy_limit_name">Energy Limit</div>
-              <div class="text-[11px] text-slate-400"><span data-i18n="energy_limit_desc">Increase max energy by</span> <span class="text-emerald-400">+500</span></div>
-              <div class="text-xs font-semibold text-blue-400 mt-0.5"><span data-i18n="lvl">Lvl</span> <span id="energy-lvl">1</span></div>
+              <div class="text-sm font-bold text-white" data-i18n="energy_limit_name">Лімит енергії</div>
+              <div class="text-[11px] text-slate-400"><span data-i18n="energy_limit_desc">Збільшити макс. енергію на</span> <span class="text-emerald-400">+500</span></div>
+              <div class="text-xs font-semibold text-blue-400 mt-0.5"><span data-i18n="lvl">Рівень</span> <span id="energy-lvl">1</span></div>
             </div>
           </div>
           <button id="buy-energy" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-500 text-slate-950 font-bold text-xs shadow-lg glass-card-interactive flex items-center space-x-1">
@@ -213,9 +212,9 @@
           <div class="flex items-center space-x-3">
             <div class="w-12 h-12 rounded-xl bg-purple-500/20 flex items-center justify-center text-purple-400 text-xl border border-purple-500/30"><i class="fa-solid fa-robot"></i></div>
             <div>
-              <div class="text-sm font-bold text-white" data-i18n="bot_name">Auto-Mining Bot</div>
-              <div class="text-[11px] text-slate-400"><span data-i18n="bot_desc">Earns</span> <span class="text-emerald-400">+5</span> <span data-i18n="coins_sec">coins / sec</span></div>
-              <div class="text-xs font-semibold text-purple-400 mt-0.5"><span data-i18n="lvl">Lvl</span> <span id="passive-lvl">0</span></div>
+              <div class="text-sm font-bold text-white" data-i18n="bot_name">Авто-бот</div>
+              <div class="text-[11px] text-slate-400"><span data-i18n="bot_desc">Збирає</span> <span class="text-emerald-400">+5</span> <span data-i18n="coins_sec">монет / сек</span></div>
+              <div class="text-xs font-semibold text-purple-400 mt-0.5"><span data-i18n="lvl">Рівень</span> <span id="passive-lvl">0</span></div>
             </div>
           </div>
           <button id="buy-passive" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-500 text-slate-100 font-bold text-xs shadow-lg glass-card-interactive flex items-center space-x-1">
@@ -229,42 +228,42 @@
     <section id="tab-tasks" class="w-full flex flex-col items-center space-y-3 hidden">
       <h2 class="text-xl font-bold text-slate-100 flex items-center space-x-2">
         <i class="fa-solid fa-list-check text-sky-400"></i>
-        <span data-i18n="tasks_title">Earn Rewards</span>
+        <span data-i18n="tasks_title">Завдання та нагороди</span>
       </h2>
-      <p class="text-xs text-slate-400 text-center mb-2" data-i18n="tasks_subtitle">Complete quick tasks to get free coins instantly!</p>
+      <p class="text-xs text-slate-400 text-center mb-2" data-i18n="tasks_subtitle">Виконуйте швидкі завдання та отримуйте бонуси!</p>
 
       <div class="w-full space-y-2.5">
         <div class="glass-card p-3.5 rounded-2xl flex items-center justify-between">
           <div class="flex items-center space-x-3">
             <div class="w-10 h-10 rounded-xl bg-sky-500/20 flex items-center justify-center text-sky-400 text-lg"><i class="fa-brands text-sky-400 fa-telegram"></i></div>
             <div>
-              <div class="text-xs font-bold text-white" data-i18n="task_1">Join TG Channel</div>
+              <div class="text-xs font-bold text-white" data-i18n="task_1">Підпишись на телеграм канал</div>
               <div class="text-[10px] text-amber-400 font-semibold">+1,000 Coins</div>
             </div>
           </div>
-          <button id="task-1" onclick="claimTask(1, 1000)" class="px-3 py-1.5 rounded-lg bg-sky-500 hover:bg-sky-600 text-slate-950 font-bold text-xs glass-card-interactive" data-i18n="claim_btn">Claim</button>
+          <button id="task-1" onclick="claimTask(1, 1000)" class="px-3 py-1.5 rounded-lg bg-sky-500 hover:bg-sky-600 text-slate-950 font-bold text-xs glass-card-interactive" data-i18n="claim_btn">Забрати</button>
         </div>
 
         <div class="glass-card p-3.5 rounded-2xl flex items-center justify-between">
           <div class="flex items-center space-x-3">
             <div class="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-400 text-lg"><i class="fa-brands fa-twitter"></i></div>
             <div>
-              <div class="text-xs font-bold text-white" data-i18n="task_2">Follow X / Twitter</div>
+              <div class="text-xs font-bold text-white" data-i18n="task_2">Підпишись на X / Twitter</div>
               <div class="text-[10px] text-amber-400 font-semibold">+2,000 Coins</div>
             </div>
           </div>
-          <button id="task-2" onclick="claimTask(2, 2000)" class="px-3 py-1.5 rounded-lg bg-sky-500 hover:bg-sky-600 text-slate-950 font-bold text-xs glass-card-interactive" data-i18n="claim_btn">Claim</button>
+          <button id="task-2" onclick="claimTask(2, 2000)" class="px-3 py-1.5 rounded-lg bg-sky-500 hover:bg-sky-600 text-slate-950 font-bold text-xs glass-card-interactive" data-i18n="claim_btn">Забрати</button>
         </div>
 
         <div class="glass-card p-3.5 rounded-2xl flex items-center justify-between">
           <div class="flex items-center space-x-3">
             <div class="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-400 text-lg"><i class="fa-solid fa-calendar-check"></i></div>
             <div>
-              <div class="text-xs font-bold text-white" data-i18n="task_3">Daily Check-In</div>
+              <div class="text-xs font-bold text-white" data-i18n="task_3">Щоденний бонус</div>
               <div class="text-[10px] text-amber-400 font-semibold">+500 Coins</div>
             </div>
           </div>
-          <button id="task-3" onclick="claimTask(3, 500)" class="px-3 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-xs glass-card-interactive" data-i18n="claim_btn">Claim</button>
+          <button id="task-3" onclick="claimTask(3, 500)" class="px-3 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-xs glass-card-interactive" data-i18n="claim_btn">Забрати</button>
         </div>
       </div>
     </section>
@@ -273,23 +272,23 @@
     <section id="tab-stats" class="w-full flex flex-col items-center space-y-3 hidden">
       <h2 class="text-xl font-bold text-slate-100 flex items-center space-x-2">
         <i class="fa-solid fa-chart-pie text-purple-400"></i>
-        <span data-i18n="stats_title">Player Profile</span>
+        <span data-i18n="stats_title">Профіль гравця</span>
       </h2>
       <div class="w-full glass-card p-4 rounded-2xl space-y-3">
         <div class="flex justify-between items-center border-b border-slate-700/50 pb-2">
-          <span class="text-xs text-slate-400" data-i18n="stat_taps">Total Touches / Taps:</span>
+          <span class="text-xs text-slate-400" data-i18n="stat_taps">Всього кліків:</span>
           <span id="stat-taps" class="text-sm font-bold text-amber-400">0</span>
         </div>
         <div class="flex justify-between items-center border-b border-slate-700/50 pb-2">
-          <span class="text-xs text-slate-400" data-i18n="stat_total">Total Coins Mined:</span>
+          <span class="text-xs text-slate-400" data-i18n="stat_total">Всього зароблено монет:</span>
           <span id="stat-total" class="text-sm font-bold text-emerald-400">0</span>
         </div>
         <div class="flex justify-between items-center border-b border-slate-700/50 pb-2">
-          <span class="text-xs text-slate-400" data-i18n="stat_power">Current Tap Power:</span>
+          <span class="text-xs text-slate-400" data-i18n="stat_power">Поточна сила тапу:</span>
           <span id="stat-power" class="text-sm font-bold text-sky-400">1</span>
         </div>
         <div class="flex justify-between items-center">
-          <span class="text-xs text-slate-400" data-i18n="stat_id">Telegram User ID:</span>
+          <span class="text-xs text-slate-400" data-i18n="stat_id">ID користувача Telegram:</span>
           <span id="stat-tgid" class="text-xs font-mono text-slate-300">Not Connected</span>
         </div>
       </div>
@@ -301,19 +300,19 @@
     <div class="max-w-md mx-auto flex justify-around items-center">
       <button onclick="switchTab('game')" id="nav-game" class="flex flex-col items-center space-y-1 text-amber-400 transition-colors">
         <i class="fa-solid fa-gamepad text-lg"></i>
-        <span class="text-[10px] font-medium" data-i18n="nav_earn">Earn</span>
+        <span class="text-[10px] font-medium" data-i18n="nav_earn">Грати</span>
       </button>
       <button onclick="switchTab('shop')" id="nav-shop" class="flex flex-col items-center space-y-1 text-slate-500 hover:text-slate-300 transition-colors">
         <i class="fa-solid fa-rocket text-lg"></i>
-        <span class="text-[10px] font-medium" data-i18n="nav_boosts">Boosts</span>
+        <span class="text-[10px] font-medium" data-i18n="nav_boosts">Бусти</span>
       </button>
       <button onclick="switchTab('tasks')" id="nav-tasks" class="flex flex-col items-center space-y-1 text-slate-500 hover:text-slate-300 transition-colors">
         <i class="fa-solid fa-list-check text-lg"></i>
-        <span class="text-[10px] font-medium" data-i18n="nav_tasks">Tasks</span>
+        <span class="text-[10px] font-medium" data-i18n="nav_tasks">Завдання</span>
       </button>
       <button onclick="switchTab('stats')" id="nav-stats" class="flex flex-col items-center space-y-1 text-slate-500 hover:text-slate-300 transition-colors">
         <i class="fa-solid fa-chart-pie text-lg"></i>
-        <span class="text-[10px] font-medium" data-i18n="nav_stats">Stats</span>
+        <span class="text-[10px] font-medium" data-i18n="nav_stats">Профіль</span>
       </button>
     </div>
   </nav>
